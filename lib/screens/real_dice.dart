@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../app/modules/game_screen/controllers/game_screen_controller.dart';
 import '../components/dice_image.dart';
 import '../components/tile.dart';
-import '../player_data.dart';
 import '../components/home_box.dart';
 
-class RealDice extends StatelessWidget {
-  const RealDice({super.key});
+class GameScreenView extends GetView<GameScreenController> {
+  const GameScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class RealDice extends StatelessWidget {
               height: height,
               width: width,
               color: Colors.white,
-              child: GetBuilder<PlayerData>(builder: (controller) {
+              child: GetBuilder<GameScreenController>(builder: (controller) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../player_data.dart';
-import 'player.dart';
+import '../app/models/player_position.dart';
+import '../app/modules/game_screen/controllers/game_screen_controller.dart';
 
 class Tile extends StatelessWidget {
   final int id;
@@ -54,8 +54,8 @@ class Tile extends StatelessWidget {
     }
 
     return Expanded(
-      child: GetBuilder<PlayerData>(builder: (controller) {
-        Player? player = controller.inTile(id);
+      child: GetBuilder<GameScreenController>(builder: (controller) {
+        PlayerPosition? player = controller.inTile(id);
         return Container(
           padding: const EdgeInsets.all(3.0),
           height: double.infinity,

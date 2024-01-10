@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class Player {
+class PlayerPosition {
   late final int id;
   late final Color color;
-  late final int position;
+  late int position;
   late final String stringColor;
 
-  Player(int id, int position) {
+  PlayerPosition(int id, int position) {
     this.id = id;
     this.position = position;
     if (id < 4) {

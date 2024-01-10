@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import '../../../routes/app_pages.dart';
 import '../controllers/choice_screen_controller.dart';
 
 class ChoiceScreenView extends GetView<ChoiceScreenController> {
@@ -45,7 +46,8 @@ class ChoiceScreenView extends GetView<ChoiceScreenController> {
                       'Choose Dice Type:',
                       style: TextStyle(
                           color: Colors.lightGreenAccent,
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18),
                     ),
                   ),
                   const SizedBox(
@@ -101,23 +103,23 @@ class ChoiceScreenView extends GetView<ChoiceScreenController> {
               const SizedBox(
                 height: 32.0,
               ),
-              const Text(
-                'Select Players:',
-                style: TextStyle(
-                    color: Colors.lightGreenAccent,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
-              ),
+              Obx(() => Text(
+                    'Select Players (${controller.playerCount.value})',
+                    style: const TextStyle(
+                        color: Colors.lightGreenAccent,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18),
+                  )),
               const SizedBox(
-                height: 10.0,
+                height: 16.0,
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.5,
+                width: MediaQuery.of(context).size.width * 0.55,
                 child: GridView.count(
                   shrinkWrap: true,
                   crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
                   physics: const NeverScrollableScrollPhysics(),
                   children: List.generate(4, (index) {
                     return GetBuilder<ChoiceScreenController>(
@@ -133,9 +135,12 @@ class ChoiceScreenView extends GetView<ChoiceScreenController> {
                             onPressed: () {
                               controller.togglePlayer(index);
                             },
-                            child: Text(
-                              player.userPlaying ? player.name : "None",
-                              style: const TextStyle(color: Colors.white),
+                            child: FittedBox(
+                              child: Text(
+                                player.userPlaying ? player.name : "None",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                              ),
                             ),
                           );
                         });
@@ -149,41 +154,46 @@ class ChoiceScreenView extends GetView<ChoiceScreenController> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xfffc8c03),
                   foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0)),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
                 child: const Text(
                   'Let\'s Play',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  style: TextStyle(fontSize: 16),
                 ),
                 onPressed: () {
                   if (controller.playerCount < 2) {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return const AlertDialog(
-                            title: Text(
-                                'Ludo is played with minimum of 2 players.'));
+                        return AlertDialog(
+                          title: const Text('Minimum Players'),
+                          contentTextStyle: const TextStyle(
+                              fontSize: 16, color: Colors.black),
+                          titleTextStyle: const TextStyle(
+                              fontSize: 20, color: Colors.black),
+                          content: const Text(
+                              'Ludo is played with minimum of 2 players.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            )
+                          ],
+                        );
                       },
                     );
                     return;
                   }
-                  // if (players < 4) {
-                  //   for (int i = 0; i < 4; i++) {
-                  //     if (!buttonState[i]) {
-                  //       // Get.find<PlayerData>().winners.add(i * 4);
-                  //     }
-                  //   }
-                  //   if (!buttonState[0]) {
-                  //     // Get.find<PlayerData>().nextPlayer();
-                  //   }
-                  // }
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) {
-                  //     return real ? const RealDice() : const VirtualDice();
-                  //   }),
-                  // );
+
+                  Get.toNamed(Routes.GAME_SCREEN, arguments: {
+                    "real": controller.realDice.value,
+                    "players": controller.players
+                  });
                 },
               ),
             ],

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/routes/app_pages.dart';
-import 'player_data.dart';
-import 'screens/choice_screen.dart';
 
 void main() {
   runApp(const MyApp());
