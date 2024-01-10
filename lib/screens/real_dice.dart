@@ -1,17 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:interactiveapp/components/dice_image.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:get/get.dart';
+import '../components/dice_image.dart';
 import '../components/tile.dart';
 import '../player_data.dart';
-import 'package:provider/provider.dart';
 import '../components/home_box.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
-import 'virtual_dice.dart';
 
 class RealDice extends StatelessWidget {
+  const RealDice({super.key});
+
   @override
   Widget build(BuildContext context) {
     double widthContext = MediaQuery.of(context).size.width;
@@ -26,7 +22,7 @@ class RealDice extends StatelessWidget {
       width = (15 / 17) * height;
     }
     return Scaffold(
-      backgroundColor: Color(0xFF222222),
+      backgroundColor: const Color(0xFF222222),
       body: Stack(
         children: [
           Center(
@@ -34,9 +30,7 @@ class RealDice extends StatelessWidget {
               height: height,
               width: width,
               color: Colors.white,
-              child:
-                  Consumer<PlayerData>(builder: (context, playerData, child) {
-                playerData.context = context;
+              child: GetBuilder<PlayerData>(builder: (controller) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -96,7 +90,7 @@ class RealDice extends StatelessWidget {
                                         ),
                                       ),
                                     ), //Red Box
-                                    Expanded(
+                                    const Expanded(
                                       flex: 3,
                                       child: Row(
                                         children: [
@@ -193,7 +187,7 @@ class RealDice extends StatelessWidget {
                                 flex: 3,
                                 child: Row(
                                   children: [
-                                    Expanded(
+                                    const Expanded(
                                       flex: 6,
                                       child: Column(
                                         children: [
@@ -240,10 +234,10 @@ class RealDice extends StatelessWidget {
                                       flex: 3,
                                       child: Container(
                                           decoration: BoxDecoration(
-                                              color: playerData.boxColor,
+                                              color: controller.boxColor,
                                               borderRadius:
                                                   BorderRadius.circular(10.0)),
-                                          padding: EdgeInsets.all(6.0),
+                                          padding: const EdgeInsets.all(6.0),
                                           width: double.infinity,
                                           height: double.infinity,
                                           alignment: Alignment.center,
@@ -315,7 +309,7 @@ class RealDice extends StatelessWidget {
 //                                          ),
                                           ),
                                     ), //Home Box
-                                    Expanded(
+                                    const Expanded(
                                       flex: 6,
                                       child: Column(
                                         children: [
@@ -412,7 +406,7 @@ class RealDice extends StatelessWidget {
                                         ),
                                       ),
                                     ), //Blue Box
-                                    Expanded(
+                                    const Expanded(
                                       flex: 3,
                                       child: Row(
                                         children: [
@@ -461,7 +455,7 @@ class RealDice extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                               width: 0.5, color: Colors.black),
-                                          color: Color(0xffdddd11),
+                                          color: const Color(0xffdddd11),
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
@@ -510,78 +504,78 @@ class RealDice extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Container(
-                        padding: EdgeInsets.all(2.0),
-                        color: Color(0xFF222222),
+                        padding: const EdgeInsets.all(2.0),
+                        color: const Color(0xFF222222),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             DiceImage(
                               image: Image.asset('images/dice1.png'),
                               onPress: () {
-                                playerData.rollRealDice(1);
+                                controller.rollRealDice(1);
                               },
                               width: width,
-                              color: playerData.currentRoll == 1 &&
-                                      !playerData.movedPlayer
+                              color: controller.currentRoll == 1 &&
+                                      !controller.movedPlayer
                                   ? Colors.white70
-                                  : playerData.boxColor,
+                                  : controller.boxColor,
                             ),
                             DiceImage(
                               image: Image.asset('images/dice2.png'),
                               onPress: () {
-                                playerData.rollRealDice(2);
+                                controller.rollRealDice(2);
                               },
                               width: width,
-                              color: playerData.currentRoll == 2 &&
-                                      !playerData.movedPlayer
+                              color: controller.currentRoll == 2 &&
+                                      !controller.movedPlayer
                                   ? Colors.white70
-                                  : playerData.boxColor,
+                                  : controller.boxColor,
                             ),
                             DiceImage(
                               image: Image.asset('images/dice3.png'),
                               onPress: () {
-                                playerData.rollRealDice(3);
+                                controller.rollRealDice(3);
                               },
                               width: width,
-                              color: playerData.currentRoll == 3 &&
-                                      !playerData.movedPlayer
+                              color: controller.currentRoll == 3 &&
+                                      !controller.movedPlayer
                                   ? Colors.white70
-                                  : playerData.boxColor,
+                                  : controller.boxColor,
                             ),
                             DiceImage(
                               image: Image.asset('images/dice4.png'),
                               onPress: () {
-                                playerData.rollRealDice(4);
+                                controller.rollRealDice(4);
                               },
                               width: width,
-                              color: playerData.currentRoll == 4 &&
-                                      !playerData.movedPlayer
+                              color: controller.currentRoll == 4 &&
+                                      !controller.movedPlayer
                                   ? Colors.white70
-                                  : playerData.boxColor,
+                                  : controller.boxColor,
                             ),
                             DiceImage(
                               image: Image.asset('images/dice5.png'),
                               onPress: () {
-                                playerData.rollRealDice(5);
+                                controller.rollRealDice(5);
                               },
                               width: width,
-                              color: playerData.currentRoll == 5 &&
-                                      !playerData.movedPlayer
+                              color: controller.currentRoll == 5 &&
+                                      !controller.movedPlayer
                                   ? Colors.white70
-                                  : playerData.boxColor,
+                                  : controller.boxColor,
                             ),
                             DiceImage(
                               image: Image.asset('images/dice6.png'),
                               onPress: () {
-                                playerData.rollRealDice(6);
+                                controller.rollRealDice(6);
                               },
                               width: width,
-                              color: playerData.currentRoll == 6 &&
-                                      !playerData.movedPlayer
+                              color: controller.currentRoll == 6 &&
+                                      !controller.movedPlayer
                                   ? Colors.white70
-                                  : playerData.boxColor,
+                                  : controller.boxColor,
                             ),
                           ],
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                         ),
                       ),
                     ) //Dice Images
@@ -595,37 +589,29 @@ class RealDice extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                     width: width / 15,
                     height: width / 15,
                     child: FittedBox(
                       child: FloatingActionButton(
-                        backgroundColor: Color(0xffebc634),
-                        onPressed: () => Alert(
-                          style: AlertStyle(
-                            isCloseButton: false,
-                            alertBorder: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              side: BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          context: context,
-                          title: 'Do you want to exit the game?',
-                          buttons: [
-                            DialogButton(
-                              child: Text(
+                        backgroundColor: const Color(0xffebc634),
+                        onPressed: () => Get.dialog(AlertDialog(
+                          title: const Text('Do you want to exit the game?'),
+                          actions: [
+                            TextButton(
+                              child: const Text(
                                 "YES",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               ),
-                              onPressed: () => Phoenix.rebirth(context),
-                              color: Color.fromRGBO(230, 23, 47, 1.0),
+                              onPressed: () {
+                                // TODO: implement onPressed
+                                Navigator.pop(context);
+                              },
                             ),
-                            DialogButton(
-                              child: Text(
+                            TextButton(
+                              child: const Text(
                                 "NO",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
@@ -633,18 +619,17 @@ class RealDice extends StatelessWidget {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              color: Color.fromRGBO(0, 179, 134, 1.0),
                             )
                           ],
-                        ).show(),
-                        child: Icon(
+                        )),
+                        child: const Icon(
                           Icons.arrow_back_ios,
                         ),
                       ),
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Row(
                     children: [
@@ -653,32 +638,32 @@ class RealDice extends StatelessWidget {
                         style: TextStyle(
                             color: Colors.white70, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(
-                        height: width / 15,
-                        child: FittedBox(
-                          child: LiteRollingSwitch(
-                            animationDuration: Duration(milliseconds: 0),
-                            value: true,
-                            textOn: 'Real',
-                            textOff: 'Virtual',
-                            colorOn: Colors.green[900],
-                            colorOff: Colors.blueGrey[800],
-                            iconOn: Icons.account_circle,
-                            iconOff: Icons.computer,
-                            textSize: 16.0,
-                            onChanged: (bool state) {
-                              if (!state) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) {
-                                    return VirtualDice();
-                                  }),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ),
+                      // SizedBox(
+                      //   height: width / 15,
+                      //   child: FittedBox(
+                      //     child: LiteRollingSwitch(
+                      //       animationDuration: Duration(milliseconds: 0),
+                      //       value: true,
+                      //       textOn: 'Real',
+                      //       textOff: 'Virtual',
+                      //       colorOn: Colors.green[900],
+                      //       colorOff: Colors.blueGrey[800],
+                      //       iconOn: Icons.account_circle,
+                      //       iconOff: Icons.computer,
+                      //       textSize: 16.0,
+                      //       onChanged: (bool state) {
+                      //         if (!state) {
+                      //           Navigator.pushReplacement(
+                      //             context,
+                      //             MaterialPageRoute(builder: (context) {
+                      //               return VirtualDice();
+                      //             }),
+                      //           );
+                      //         }
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

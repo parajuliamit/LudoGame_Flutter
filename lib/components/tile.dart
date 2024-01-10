@@ -1,42 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../player_data.dart';
 import 'player.dart';
-import 'package:provider/provider.dart';
-import 'package:interactiveapp/player_data.dart';
 
 class Tile extends StatelessWidget {
   final int id;
-  Tile(this.id);
+  const Tile(this.id, {super.key});
   @override
   Widget build(BuildContext context) {
     Color tileColor = Colors.white;
-    FittedBox tileIcon;
+    FittedBox? tileIcon;
 
     if (id > 51) {
       if (id >= 52 && id <= 56) {
-        tileColor = Colors.red[300];
+        tileColor = Colors.red.shade300;
       } else if (id >= 57 && id <= 61) {
-        tileColor = Colors.green[300];
+        tileColor = Colors.green.shade300;
       } else if (id >= 62 && id <= 66) {
-        tileColor = Color(0xeeeeee11);
+        tileColor = const Color(0xeeeeee11);
       } else if (id >= 67 && id <= 71) {
-        tileColor = Colors.blue[300];
+        tileColor = Colors.blue.shade300;
       }
     } else if (id % 13 == 0) {
       switch (id) {
         case 0:
-          tileColor = Colors.red[300];
+          tileColor = Colors.red.shade300;
           break;
         case 13:
-          tileColor = Colors.green[300];
+          tileColor = Colors.green.shade300;
           break;
         case 26:
-          tileColor = Color(0xeeeeee11);
+          tileColor = const Color(0xeeeeee11);
           break;
         case 39:
-          tileColor = Colors.blue[300];
+          tileColor = Colors.blue.shade300;
           break;
       }
-      tileIcon = FittedBox(
+      tileIcon = const FittedBox(
         fit: BoxFit.contain,
         child: Icon(
           Icons.radio_button_checked,
@@ -44,7 +44,7 @@ class Tile extends StatelessWidget {
         ),
       );
     } else if (id % 13 == 8) {
-      tileIcon = FittedBox(
+      tileIcon = const FittedBox(
         fit: BoxFit.contain,
         child: Icon(
           Icons.stars,
@@ -54,10 +54,10 @@ class Tile extends StatelessWidget {
     }
 
     return Expanded(
-      child: Consumer<PlayerData>(builder: (context, playerData, child) {
-        Player player = playerData.inTile(id);
+      child: GetBuilder<PlayerData>(builder: (controller) {
+        Player? player = controller.inTile(id);
         return Container(
-          padding: EdgeInsets.all(3.0),
+          padding: const EdgeInsets.all(3.0),
           height: double.infinity,
           width: double.infinity,
           decoration: BoxDecoration(
@@ -67,20 +67,20 @@ class Tile extends StatelessWidget {
           child: player != null
               ? GestureDetector(
                   onTap: () {
-                    if (playerData.players[playerData.playerNumber].color ==
-                        playerData.players[player.id].color) {
-                      playerData.movePlayer(player.id);
+                    if (controller.players[controller.playerNumber].color ==
+                        controller.players[player.id].color) {
+                      controller.movePlayer(player.id);
                     }
                   },
                   child: Container(
-                    padding: EdgeInsets.all(1.0),
+                    padding: const EdgeInsets.all(1.0),
                     decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
                             color: player.color.withOpacity(0.5),
                             spreadRadius: 1,
                             blurRadius: 2,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                         shape: BoxShape.circle,

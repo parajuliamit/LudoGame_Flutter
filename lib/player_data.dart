@@ -1,22 +1,21 @@
+import 'package:get/get.dart';
+
 import 'components/player.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import 'components/winner_page_tile.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'dart:async';
 
-class PlayerData extends ChangeNotifier {
+class PlayerData extends GetxController {
   final assetsAudioPlayer = AssetsAudioPlayer();
   int currentRoll = 0;
   List<Player> players = [];
-  int playerNumber;
+  late int playerNumber;
   int diceValue = 0;
-  Color boxColor;
+  late Color boxColor;
   bool killed = false;
   bool movedPlayer = true;
-  BuildContext context;
 
   List<int> winners = [];
 
@@ -27,7 +26,7 @@ class PlayerData extends ChangeNotifier {
     for (int i = 0; i < 16; i++) {
       players.add(Player(i, i * (-1) - 1));
     }
-    boxColor = Colors.red[800];
+    boxColor = Colors.red.shade800;
     playerNumber = 0;
   }
 
@@ -119,56 +118,39 @@ class PlayerData extends ChangeNotifier {
           winner();
           return;
         }
-        Alert(
-          style: AlertStyle(
-            isCloseButton: false,
-            isOverlayTapDismiss: false,
-            animationDuration: Duration(milliseconds: 200),
-            alertBorder: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              side: BorderSide(
-                color: Colors.grey,
+        Get.dialog(AlertDialog(
+          titleTextStyle: TextStyle(
+            color: boxColor,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.grey.withOpacity(0.5),
+                blurRadius: 2,
+                offset: const Offset(0, 2),
               ),
-            ),
-            titleStyle: TextStyle(
-              color: boxColor,
-              fontWeight: FontWeight.bold,
-              shadows: [
-                Shadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  blurRadius: 2,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
+            ],
           ),
-          context: context,
-          title: winners.length + numberOfPlayers == 5
+          title: Text(winners.length + numberOfPlayers == 5
               ? "${players[playerNumber].stringColor} WON THE GAME."
-              : "${players[playerNumber].stringColor} ALSO COMPLETED THE GAME.",
-          desc: "Do you want to continue playing?",
-          buttons: [
-            DialogButton(
-              child: Text(
-                "YES",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              onPressed: () => Navigator.pop(context),
-              color: Color.fromRGBO(0, 179, 134, 1.0),
-            ),
-            DialogButton(
-              child: Text(
-                "NO",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
+              : "${players[playerNumber].stringColor} ALSO COMPLETED THE GAME."),
+          content: const Text("Do you want to continue playing?"),
+          actions: [
+            TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Get.back();
                 winner();
               },
-              color: Colors.blueGrey,
-            )
+              child: const Text("NO"),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("YES"),
+            ),
           ],
-        ).show();
+        ));
+
         nextPlayer();
       } else {
         assetsAudioPlayer.open(Audio("assets/home.mp3"), volume: 0.25);
@@ -187,7 +169,7 @@ class PlayerData extends ChangeNotifier {
       }
     }
 
-    notifyListeners();
+    update();
     if (position != 72) {
       nextPlayer();
     }
@@ -213,10 +195,10 @@ class PlayerData extends ChangeNotifier {
     assetsAudioPlayer.open(
       Audio("assets/start.mp3"),
     );
-    notifyListeners();
+    update();
   }
 
-  Player inTile(int id) {
+  Player? inTile(int id) {
     if (id % 13 == 0 || id % 13 == 8) {
       for (int i = 0; i < 4; i++) {
         if (players[playerNumber + i].position == id) {
@@ -234,7 +216,7 @@ class PlayerData extends ChangeNotifier {
 
   void dicePressed() {
     int count = 0;
-    int single;
+    late int single;
     int games = 0;
     for (int i = 0; i < 4; i++) {
       if (players[playerNumber + i].position < 0) {
@@ -280,7 +262,7 @@ class PlayerData extends ChangeNotifier {
       return;
     }
     diceValue = 0;
-    notifyListeners();
+    update();
 
     assetsAudioPlayer.open(
       Audio("assets/dice.wav"),
@@ -288,7 +270,7 @@ class PlayerData extends ChangeNotifier {
     Future.delayed(const Duration(milliseconds: 500), () {
       diceValue = Random().nextInt(6) + 1;
       movedPlayer = false;
-      notifyListeners();
+      update();
       dicePressed();
     });
   }
@@ -301,7 +283,7 @@ class PlayerData extends ChangeNotifier {
     diceValue = value;
     currentRoll = value;
     movedPlayer = false;
-    notifyListeners();
+    update();
     dicePressed();
   }
 
@@ -325,236 +307,93 @@ class PlayerData extends ChangeNotifier {
         }
       }
       boxColor = players[playerNumber].color;
-      notifyListeners();
+      update();
     }
     killed = false;
   }
 
   void alert() {
-    Alert(
-      style: AlertStyle(isCloseButton: false, isOverlayTapDismiss: false),
-      context: context,
-      title: "Move a token first.",
-      buttons: [
-        DialogButton(
-          child: Text(
-            "OK",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Color.fromRGBO(0, 179, 134, 1.0),
+    Get.dialog(
+      AlertDialog(
+        titleTextStyle: TextStyle(
+          color: boxColor,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.grey.withOpacity(0.5),
+              blurRadius: 2,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ],
-    ).show();
+        title: const Text("Move a token first."),
+        content: const Text("You can't roll the dice without moving a token."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   void winner() {
     if (numberOfPlayers == 4) {
       if (winners.length == 1) {
-        Alert(
-            style: AlertStyle(isOverlayTapDismiss: false, isCloseButton: false),
-            context: context,
-            title: "RESULTS",
-            content: Column(
-              children: [
-                WinnerPageTile(
-                  text: players[winners[0]].stringColor,
-                  color: players[winners[0]].color,
-                  icon: Icon(
-                    Icons.looks_one,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+        Get.dialog(AlertDialog(
+          titleTextStyle: TextStyle(
+            color: boxColor,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.grey.withOpacity(0.5),
+                blurRadius: 2,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          title: const Text("RESULTS"),
+          content: Text(
+              "${players[winners[0]].stringColor} WON THE GAME.\nDo you want to continue playing?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+                // TODO: Add exit functionality
+              },
+              child: const Text("NO"),
             ),
-            buttons: [
-              DialogButton(
-                color: Colors.blueGrey,
-                onPressed: () => Phoenix.rebirth(context),
-                child: Text(
-                  "EXIT",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              )
-            ]).show();
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("YES"),
+            ),
+          ],
+        ));
       } else if (winners.length == 2) {
-        Alert(
-            style: AlertStyle(isOverlayTapDismiss: false, isCloseButton: false),
-            context: context,
-            title: "RESULTS",
-            content: Column(
-              children: [
-                WinnerPageTile(
-                  text: players[winners[0]].stringColor,
-                  color: players[winners[0]].color,
-                  icon: Icon(
-                    Icons.looks_one,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ),
-                WinnerPageTile(
-                  text: players[winners[1]].stringColor,
-                  color: players[winners[1]].color,
-                  icon: Icon(
-                    Icons.looks_two,
-                    size: 30.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            buttons: [
-              DialogButton(
-                color: Colors.blueGrey,
-                onPressed: () => Phoenix.rebirth(context),
-                child: Text(
-                  "EXIT",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              )
-            ]).show();
-      } else {
-        Alert(
-            style: AlertStyle(isOverlayTapDismiss: false, isCloseButton: false),
-            context: context,
-            title: "RESULTS",
-            content: Column(
-              children: [
-                WinnerPageTile(
-                  text: players[winners[0]].stringColor,
-                  color: players[winners[0]].color,
-                  icon: Icon(
-                    Icons.looks_one,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ),
-                WinnerPageTile(
-                  text: players[winners[1]].stringColor,
-                  color: players[winners[1]].color,
-                  icon: Icon(
-                    Icons.looks_two,
-                    size: 30.0,
-                    color: Colors.white,
-                  ),
-                ),
-                WinnerPageTile(
-                  text: players[winners[2]].stringColor,
-                  color: players[winners[2]].color,
-                  icon: Icon(
-                    Icons.looks_3,
-                  ),
-                ),
-                WinnerPageTile(
-                  text: players[winners[3]].stringColor,
-                  color: players[winners[3]].color,
-                  icon: Icon(Icons.looks_4),
-                ),
-              ],
-            ),
-            buttons: [
-              DialogButton(
-                color: Colors.blueGrey,
-                onPressed: () => Phoenix.rebirth(context),
-                child: Text(
-                  "EXIT",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              )
-            ]).show();
-      }
-    } else if (numberOfPlayers == 3) {
-      winners.removeAt(0);
-      if (winners.length == 1) {
-        Alert(
-            style: AlertStyle(isOverlayTapDismiss: false, isCloseButton: false),
-            context: context,
-            title: "RESULTS",
-            content: Column(
-              children: [
-                WinnerPageTile(
-                  text: players[winners[0]].stringColor,
-                  color: players[winners[0]].color,
-                  icon: Icon(
-                    Icons.looks_one,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            buttons: [
-              DialogButton(
-                color: Colors.blueGrey,
-                onPressed: () => Phoenix.rebirth(context),
-                child: Text(
-                  "EXIT",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              )
-            ]).show();
-      } else {
-        Alert(
-            style: AlertStyle(isOverlayTapDismiss: false, isCloseButton: false),
-            context: context,
-            title: "RESULTS",
-            content: Column(
-              children: [
-                WinnerPageTile(
-                  text: players[winners[0]].stringColor,
-                  color: players[winners[0]].color,
-                  icon: Icon(
-                    Icons.looks_one,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ),
-                WinnerPageTile(
-                  text: players[winners[1]].stringColor,
-                  color: players[winners[1]].color,
-                  icon: Icon(
-                    Icons.looks_two,
-                    size: 30.0,
-                    color: Colors.white,
-                  ),
-                ),
-                WinnerPageTile(
-                  text: players[winners[2]].stringColor,
-                  color: players[winners[2]].color,
-                  icon: Icon(
-                    Icons.looks_two,
-                    size: 30.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            buttons: [
-              DialogButton(
-                color: Colors.blueGrey,
-                onPressed: () => Phoenix.rebirth(context),
-                child: Text(
-                  "EXIT",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              )
-            ]).show();
-      }
-    } else {
-      winners.removeAt(0);
-      winners.removeAt(0);
-      Alert(
-          style: AlertStyle(isOverlayTapDismiss: false, isCloseButton: false),
-          context: context,
-          title: "RESULTS",
+        Get.dialog(AlertDialog(
+          titleTextStyle: TextStyle(
+            color: boxColor,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.grey.withOpacity(0.5),
+                blurRadius: 2,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          title: const Text("RESULTS"),
           content: Column(
             children: [
               WinnerPageTile(
                 text: players[winners[0]].stringColor,
                 color: players[winners[0]].color,
-                icon: Icon(
+                icon: const Icon(
                   Icons.looks_one,
                   size: 40.0,
                   color: Colors.white,
@@ -563,7 +402,7 @@ class PlayerData extends ChangeNotifier {
               WinnerPageTile(
                 text: players[winners[1]].stringColor,
                 color: players[winners[1]].color,
-                icon: Icon(
+                icon: const Icon(
                   Icons.looks_two,
                   size: 30.0,
                   color: Colors.white,
@@ -571,16 +410,182 @@ class PlayerData extends ChangeNotifier {
               ),
             ],
           ),
-          buttons: [
-            DialogButton(
-              color: Colors.blueGrey,
-              onPressed: () => Phoenix.rebirth(context),
-              child: Text(
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+                // TODO: Add exit functionality
+              },
+              child: const Text("EXIT"),
+            ),
+          ],
+        ));
+      } else {
+        Get.dialog(AlertDialog(
+            title: const Text("RESULTS"),
+            content: Column(
+              children: [
+                WinnerPageTile(
+                  text: players[winners[0]].stringColor,
+                  color: players[winners[0]].color,
+                  icon: const Icon(
+                    Icons.looks_one,
+                    size: 40.0,
+                    color: Colors.white,
+                  ),
+                ),
+                WinnerPageTile(
+                  text: players[winners[1]].stringColor,
+                  color: players[winners[1]].color,
+                  icon: const Icon(
+                    Icons.looks_two,
+                    size: 30.0,
+                    color: Colors.white,
+                  ),
+                ),
+                WinnerPageTile(
+                  text: players[winners[2]].stringColor,
+                  color: players[winners[2]].color,
+                  icon: const Icon(
+                    Icons.looks_3,
+                  ),
+                ),
+                WinnerPageTile(
+                  text: players[winners[3]].stringColor,
+                  color: players[winners[3]].color,
+                  icon: const Icon(Icons.looks_4),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  // TODO: Add exit functionality
+                },
+                child: const Text(
+                  "EXIT",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              )
+            ]));
+      }
+    } else if (numberOfPlayers == 3) {
+      winners.removeAt(0);
+      if (winners.length == 1) {
+        Get.dialog(AlertDialog(
+            title: const Text("RESULTS"),
+            content: Column(
+              children: [
+                WinnerPageTile(
+                  text: players[winners[0]].stringColor,
+                  color: players[winners[0]].color,
+                  icon: const Icon(
+                    Icons.looks_one,
+                    size: 40.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  // TODO: Add exit functionality
+                },
+                child: const Text(
+                  "EXIT",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              )
+            ]));
+      } else {
+        Get.dialog(AlertDialog(
+            title: const Text("RESULTS"),
+            content: Column(
+              children: [
+                WinnerPageTile(
+                  text: players[winners[0]].stringColor,
+                  color: players[winners[0]].color,
+                  icon: const Icon(
+                    Icons.looks_one,
+                    size: 40.0,
+                    color: Colors.white,
+                  ),
+                ),
+                WinnerPageTile(
+                  text: players[winners[1]].stringColor,
+                  color: players[winners[1]].color,
+                  icon: const Icon(
+                    Icons.looks_two,
+                    size: 30.0,
+                    color: Colors.white,
+                  ),
+                ),
+                WinnerPageTile(
+                  text: players[winners[2]].stringColor,
+                  color: players[winners[2]].color,
+                  icon: const Icon(
+                    Icons.looks_two,
+                    size: 30.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                  // TODO: Add exit functionality
+                },
+                child: const Text(
+                  "EXIT",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              )
+            ]));
+      }
+    } else {
+      winners.removeAt(0);
+      winners.removeAt(0);
+      Get.dialog(AlertDialog(
+          title: const Text("RESULTS"),
+          content: Column(
+            children: [
+              WinnerPageTile(
+                text: players[winners[0]].stringColor,
+                color: players[winners[0]].color,
+                icon: const Icon(
+                  Icons.looks_one,
+                  size: 40.0,
+                  color: Colors.white,
+                ),
+              ),
+              WinnerPageTile(
+                text: players[winners[1]].stringColor,
+                color: players[winners[1]].color,
+                icon: const Icon(
+                  Icons.looks_two,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();
+                // TODO: Add exit functionality
+              },
+              child: const Text(
                 "EXIT",
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             )
-          ]).show();
+          ]));
     }
   }
 }

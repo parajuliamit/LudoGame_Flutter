@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:interactiveapp/player_data.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+
+import '../player_data.dart';
 
 class HomeBox extends StatelessWidget {
-  HomeBox({this.width, this.boxID, @required this.playerNumber});
+  const HomeBox(
+      {super.key, required this.width, required this.boxID, required this.playerNumber});
 
   final double width;
   final int boxID;
@@ -14,40 +16,34 @@ class HomeBox extends StatelessWidget {
     return CircleAvatar(
         radius: width / 23,
         backgroundColor: Colors.white,
-        child: Provider.of<PlayerData>(context).players[playerID].position ==
-                    boxID &&
-                Provider.of<PlayerData>(context).playing[playerNumber]
+        child: Get.find<PlayerData>().players[playerID].position == boxID &&
+                Get.find<PlayerData>().playing[playerNumber]
             ? GestureDetector(
                 onTap: () {
-                  Provider.of<PlayerData>(context, listen: false)
-                      .start(playerID);
+                  Get.find<PlayerData>().start(playerID);
                 },
                 child: Container(
-                  padding: EdgeInsets.all(1.0),
+                  padding: const EdgeInsets.all(1.0),
                   width: width / 16,
                   decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: Provider.of<PlayerData>(context)
+                          color: Get.find<PlayerData>()
                               .players[playerID]
                               .color
                               .withOpacity(0.5),
                           spreadRadius: 1,
                           blurRadius: 2,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                       shape: BoxShape.circle,
-                      color: Provider.of<PlayerData>(context)
-                          .players[playerID]
-                          .color,
+                      color: Get.find<PlayerData>().players[playerID].color,
                       border: Border.all(width: 0.5, color: Colors.black)),
                   child: Container(
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Provider.of<PlayerData>(context)
-                            .players[playerID]
-                            .color,
+                        color: Get.find<PlayerData>().players[playerID].color,
                         border: Border.all(
                             width: 2, color: Colors.grey.withOpacity(0.5))),
                   ),

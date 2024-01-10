@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:get/get.dart';
 import '../player_data.dart';
 import 'real_dice.dart';
-import 'package:provider/provider.dart';
 import 'virtual_dice.dart';
 
 class ChoiceScreen extends StatefulWidget {
+  const ChoiceScreen({super.key});
+
   @override
   _ChoiceScreenState createState() => _ChoiceScreenState();
 }
@@ -26,32 +26,43 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'CHOOSE DICE TYPE:',
               style: TextStyle(
                   color: Colors.greenAccent, fontWeight: FontWeight.bold),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10.0,
             ),
-            LiteRollingSwitch(
-              animationDuration: Duration(milliseconds: 300),
+            SwitchListTile(
               value: real,
-              textOn: 'Real',
-              textOff: 'Virtual',
-              colorOn: Colors.green[900],
-              colorOff: Colors.blueGrey[800],
-              iconOn: Icons.account_circle,
-              iconOff: Icons.computer,
-              textSize: 18.0,
+              title: real
+                  ? const Text(
+                      'Real Dice',
+                      style: TextStyle(
+                          color: Colors.greenAccent,
+                          fontWeight: FontWeight.bold),
+                    )
+                  : const Text(
+                      'Virtual Dice',
+                      style: TextStyle(
+                          color: Colors.greenAccent,
+                          fontWeight: FontWeight.bold),
+                    ),
+              activeColor: Colors.green[900],
+              inactiveTrackColor: Colors.blueGrey[800],
+              // iconOn: Icons.account_circle,
+              // iconOff: Icons.computer,
+              // textSize: 18.0,
               onChanged: (bool state) {
                 real = state;
+                setState(() {});
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
-            Text(
+            const Text(
               'SELECT PLAYERS:',
               style: TextStyle(
                   color: Colors.greenAccent, fontWeight: FontWeight.bold),
@@ -66,31 +77,33 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      playerSelectionButton(Colors.red[800], 0),
-                      SizedBox(
+                      playerSelectionButton(Colors.red.shade800, 0),
+                      const SizedBox(
                         width: 10.0,
                       ),
-                      playerSelectionButton(Colors.green[800], 1)
+                      playerSelectionButton(Colors.green.shade800, 1)
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      playerSelectionButton(Colors.blue[800], 3),
-                      SizedBox(
+                      playerSelectionButton(Colors.blue.shade800, 3),
+                      const SizedBox(
                         width: 10.0,
                       ),
-                      playerSelectionButton(Colors.yellow[700], 2)
+                      playerSelectionButton(Colors.yellow.shade700, 2)
                     ],
                   )
                 ],
               ),
             ),
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0)),
-              color: Color(0xfffc8c03),
-              child: Container(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xfffc8c03),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  textStyle: const TextStyle(fontSize: 20)),
+              child: const SizedBox(
                   width: 100,
                   child: Text(
                     'Let\'s Play',
@@ -98,30 +111,25 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
                   )),
               onPressed: () {
                 if (players < 2) {
-                  Alert(
-                          style: AlertStyle(isCloseButton: false),
-                          context: context,
-                          title: 'Ludo is played with minimum of 2 players.')
-                      .show();
+                  Get.dialog(const AlertDialog(
+                      title:
+                          Text('Ludo is played with minimum of 2 players.')));
                   return;
                 }
                 if (players < 4) {
                   for (int i = 0; i < 4; i++) {
                     if (!buttonState[i]) {
-                      Provider.of<PlayerData>(context, listen: false)
-                          .winners
-                          .add(i * 4);
+                      Get.find<PlayerData>().winners.add(i * 4);
                     }
                   }
                   if (!buttonState[0]) {
-                    Provider.of<PlayerData>(context, listen: false)
-                        .nextPlayer();
+                    Get.find<PlayerData>().nextPlayer();
                   }
                 }
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return real ? RealDice() : VirtualDice();
+                    return real ? const RealDice() : const VirtualDice();
                   }),
                 );
               },
@@ -132,14 +140,13 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
     );
   }
 
-  FlatButton playerSelectionButton(Color color, int i) {
-    return FlatButton(
-      child: Text(
-        buttonText[i],
-        style: TextStyle(color: Colors.white),
+  ElevatedButton playerSelectionButton(Color color, int i) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       ),
-      color: color,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
       onPressed: () {
         setState(() {
           if (buttonState[i]) {
@@ -152,13 +159,17 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
           buttonState[i] = !buttonState[i];
         });
         if (buttonState[i]) {
-          Provider.of<PlayerData>(context, listen: false).playing[i] = true;
-          Provider.of<PlayerData>(context, listen: false).numberOfPlayers++;
+          Get.find<PlayerData>().playing[i] = true;
+          Get.find<PlayerData>().numberOfPlayers++;
         } else {
-          Provider.of<PlayerData>(context, listen: false).playing[i] = false;
-          Provider.of<PlayerData>(context, listen: false).numberOfPlayers--;
+          Get.find<PlayerData>().playing[i] = false;
+          Get.find<PlayerData>().numberOfPlayers--;
         }
       },
+      child: Text(
+        buttonText[i],
+        style: const TextStyle(color: Colors.white),
+      ),
     );
   }
 }

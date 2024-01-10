@@ -1,16 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:interactiveapp/screens/real_dice.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:get/get.dart';
 import '../components/tile.dart';
 import '../player_data.dart';
-import 'package:provider/provider.dart';
 import '../components/home_box.dart';
 
 class VirtualDice extends StatelessWidget {
+  const VirtualDice({super.key});
+
   @override
   Widget build(BuildContext context) {
     double widthContext = MediaQuery.of(context).size.width;
@@ -25,7 +21,7 @@ class VirtualDice extends StatelessWidget {
       width = height;
     }
     return Scaffold(
-      backgroundColor: Color(0xFF222222),
+      backgroundColor: const Color(0xFF222222),
       body: Stack(
         children: [
           Center(
@@ -33,9 +29,7 @@ class VirtualDice extends StatelessWidget {
               height: height,
               width: width,
               color: Colors.white,
-              child:
-                  Consumer<PlayerData>(builder: (context, playerData, child) {
-                playerData.context = context;
+              child: GetBuilder<PlayerData>(builder: (controller) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -95,7 +89,7 @@ class VirtualDice extends StatelessWidget {
                                         ),
                                       ),
                                     ), //Red Box
-                                    Expanded(
+                                    const Expanded(
                                       flex: 3,
                                       child: Row(
                                         children: [
@@ -192,7 +186,7 @@ class VirtualDice extends StatelessWidget {
                                 flex: 3,
                                 child: Row(
                                   children: [
-                                    Expanded(
+                                    const Expanded(
                                       flex: 6,
                                       child: Column(
                                         children: [
@@ -238,36 +232,36 @@ class VirtualDice extends StatelessWidget {
                                     Expanded(
                                       flex: 3,
                                       child: Padding(
-                                        padding: EdgeInsets.all(3.0),
+                                        padding: const EdgeInsets.all(3.0),
                                         child: Container(
                                           width: double.infinity,
                                           height: double.infinity,
                                           alignment: Alignment.center,
                                           decoration: BoxDecoration(
-                                            color: playerData.boxColor,
+                                            color: controller.boxColor,
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: playerData.boxColor
+                                                color: controller.boxColor
                                                     .withOpacity(0.5),
                                                 spreadRadius: 1,
                                                 blurRadius: 2,
-                                                offset: Offset(2, 2),
+                                                offset: const Offset(2, 2),
                                               ),
                                             ],
                                           ),
-                                          padding: EdgeInsets.all(6.0),
+                                          padding: const EdgeInsets.all(6.0),
                                           child: GestureDetector(
                                               onTap: () {
-                                                playerData.rollDice();
+                                                controller.rollDice();
                                               },
                                               child: Image.asset(
-                                                  'images/dice${playerData.diceValue}.png')),
+                                                  'images/dice${controller.diceValue}.png')),
                                         ),
                                       ),
                                     ), //Home Box
-                                    Expanded(
+                                    const Expanded(
                                       flex: 6,
                                       child: Column(
                                         children: [
@@ -364,7 +358,7 @@ class VirtualDice extends StatelessWidget {
                                         ),
                                       ),
                                     ), //Blue Box
-                                    Expanded(
+                                    const Expanded(
                                       flex: 3,
                                       child: Row(
                                         children: [
@@ -413,7 +407,7 @@ class VirtualDice extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                               width: 0.5, color: Colors.black),
-                                          color: Color(0xffdddd11),
+                                          color: const Color(0xffdddd11),
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
@@ -469,37 +463,29 @@ class VirtualDice extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                     width: width / 15,
                     height: width / 15,
                     child: FittedBox(
                       child: FloatingActionButton(
-                        backgroundColor: Color(0xffebc634),
-                        onPressed: () => Alert(
-                          style: AlertStyle(
-                            isCloseButton: false,
-                            alertBorder: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              side: BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          context: context,
-                          title: 'Do you want to exit the game?',
-                          buttons: [
-                            DialogButton(
-                              child: Text(
+                        backgroundColor: const Color(0xffebc634),
+                        onPressed: () => Get.dialog(AlertDialog(
+                          title: const Text('Do you want to exit the game?'),
+                          actions: [
+                            TextButton(
+                              child: const Text(
                                 "YES",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               ),
-                              onPressed: () => Phoenix.rebirth(context),
-                              color: Color.fromRGBO(230, 23, 47, 1.0),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                // TODO reset app
+                              },
                             ),
-                            DialogButton(
-                              child: Text(
+                            TextButton(
+                              child: const Text(
                                 "NO",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
@@ -507,18 +493,17 @@ class VirtualDice extends StatelessWidget {
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              color: Color.fromRGBO(0, 179, 134, 1.0),
                             )
                           ],
-                        ).show(),
-                        child: Icon(
+                        )),
+                        child: const Icon(
                           Icons.arrow_back_ios,
                         ),
                       ),
                     ),
                   ),
                 ),
-                Padding(
+                const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Row(
                     children: [
@@ -527,32 +512,32 @@ class VirtualDice extends StatelessWidget {
                         style: TextStyle(
                             color: Colors.white70, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(
-                        height: width / 15,
-                        child: FittedBox(
-                          child: LiteRollingSwitch(
-                            animationDuration: Duration(milliseconds: 0),
-                            value: false,
-                            textOn: 'Real',
-                            textOff: 'Virtual',
-                            colorOn: Colors.green[900],
-                            colorOff: Colors.blueGrey[800],
-                            iconOn: Icons.account_circle,
-                            iconOff: Icons.computer,
-                            textSize: 16.0,
-                            onChanged: (bool state) {
-                              if (state) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) {
-                                    return RealDice();
-                                  }),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ),
+                      // SizedBox(
+                      //   height: width / 15,
+                      //   child: FittedBox(
+                      //     child: LiteRollingSwitch(
+                      //       animationDuration: Duration(milliseconds: 0),
+                      //       value: false,
+                      //       textOn: 'Real',
+                      //       textOff: 'Virtual',
+                      //       colorOn: Colors.green[900],
+                      //       colorOff: Colors.blueGrey[800],
+                      //       iconOn: Icons.account_circle,
+                      //       iconOff: Icons.computer,
+                      //       textSize: 16.0,
+                      //       onChanged: (bool state) {
+                      //         if (state) {
+                      //           Navigator.pushReplacement(
+                      //             context,
+                      //             MaterialPageRoute(builder: (context) {
+                      //               return RealDice();
+                      //             }),
+                      //           );
+                      //         }
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

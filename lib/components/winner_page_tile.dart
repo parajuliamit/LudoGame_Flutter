@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 class WinnerPageTile extends StatelessWidget {
-  WinnerPageTile({this.color, this.text, this.icon});
+  const WinnerPageTile({super.key, required this.color, required this.text, required this.icon});
 
-  String text;
-  Color color;
-  Icon icon;
+  final String text;
+  final Color color;
+  final Icon icon;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.0),
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
       decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 2,
               blurRadius: 3,
-              offset: Offset(1, 4),
+              offset: const Offset(1, 4),
             ),
           ],
           color: color.withOpacity(0.9),
@@ -26,7 +26,7 @@ class WinnerPageTile extends StatelessWidget {
         leading: icon,
         title: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
       ),

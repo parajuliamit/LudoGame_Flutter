@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 
 class Player {
-  int id;
-  Color color;
-  int position;
-  String stringColor;
+  late final int id;
+  late final Color color;
+  late final int position;
+  late final String stringColor;
 
   Player(int id, int position) {
     this.id = id;
     this.position = position;
     if (id < 4) {
-      this.color = Colors.red[800];
-      this.stringColor = 'RED';
+      color = Colors.red.shade800;
+      stringColor = 'RED';
     } else if (id < 8) {
-      color = Colors.green[800];
-      this.stringColor = 'GREEN';
+      color = Colors.green.shade800;
+      stringColor = 'GREEN';
     } else if (id < 12) {
-      color = Colors.yellow[700];
-      this.stringColor = 'YELLOW';
+      color = Colors.yellow.shade700;
+      stringColor = 'YELLOW';
     } else if (id < 16) {
-      color = Colors.blue[800];
-      this.stringColor = 'BLUE';
+      color = Colors.blue.shade800;
+      stringColor = 'BLUE';
     }
   }
 }
